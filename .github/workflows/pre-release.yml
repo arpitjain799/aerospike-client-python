@@ -68,5 +68,5 @@ jobs:
     needs: bump-version
     uses: ./.github/workflows/build-wheels.yml
     with:
-      test-wheels: ${{ github.event.inputs.test-wheels }}
+      test-wheels: ${{ github.event.inputs.test-wheels == 'true' }}
       branch: ${{ github.event.inputs.branch-name }}
