@@ -3,6 +3,12 @@ name: Build wheels
 # Builds wheels and sends to QE and Aerospike artifactory
 on:
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      test-wheels:
+        description: 'Run integration tests on wheels'
+        default: true
+        type: boolean
 
 jobs:
   manylinux_arm64:

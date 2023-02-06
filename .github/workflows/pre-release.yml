@@ -12,7 +12,10 @@ on:
         - minor
         - patch
         default: patch
-  push:
+    test-wheels:
+      description: 'Run integration tests on wheels'
+      default: true
+      type: boolean
 
 jobs:
   bump-version:
@@ -41,6 +44,18 @@ jobs:
           author_name: GitHub Actions
           author_email: 41898282+github-actions[bot]@users.noreply.github.com
           message: "Bump version to ${{ env.NEW_VERSION }}"
-          push: false
-      # DEBUG
-      - uses: mxschmitt/action-tmate@v3
+
+      # - name: Create release notes
+      #   uses: release-drafter/release-drafter@v5
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Create draft release in Github
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     draft: true
+
+  build-wheels:
+    needs: bump-version
+    uses: ./.github/workflows/build-wheels.yml
+    with:
+      test-wheels: ${{ github.event.inputs.test-wheels }}
