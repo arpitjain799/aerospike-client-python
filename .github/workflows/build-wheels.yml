@@ -181,7 +181,7 @@ jobs:
       run: |
         if [[ ${{ github.event.inputs.test-wheels }} == false ]]; then
           # Don't run tests
-          echo "CIBW_BEFORE_TEST=echo Skipping CIBW_BEFORE_TEST... >> $GITHUB_OUTPUT
+          echo "CIBW_BEFORE_TEST=echo Skipping CIBW_BEFORE_TEST..." >> $GITHUB_OUTPUT
           echo "CIBW_TEST_COMMAND=echo Skipping CIBW_TEST_COMMAND..." >> $GITHUB_OUTPUT
         else
           echo "CIBW_BEFORE_TEST=vagrant up && sleep 3 && pip install -r test/requirements.txt"
