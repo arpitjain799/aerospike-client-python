@@ -19,6 +19,8 @@ on:
 
 jobs:
   bump-version:
+    outputs:
+      new-version: ${{ steps.bump-version.outputs.new_version }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -29,6 +31,7 @@ jobs:
           python-version: "3.9"
       - run: pip install semver
       - name: Bump version
+        id: bump-version
         run: |
           currentVersion=$(cat VERSION)
           newVersion=$(pysemver bump ${{ github.event.inputs.version-bump }} $currentVersion)
@@ -37,13 +40,17 @@ jobs:
           sed -i "s/const char version\[8] = \".*\";/const char version\[8] = \"${newVersion}\";/" src/main/aerospike.c
           # Allow following steps to get new version
           echo "NEW_VERSION=$newVersion" >> $GITHUB_ENV
-      - name: Update Github repo
-        uses: EndBug/add-and-commit@v9
+          # Also pass new version to build wheels workflow
+          echo "new_version=$newVersion" >> $GITHUB_OUTPUT
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v4
         with:
-          add: src/main/aerospike.c VERSION
-          author_name: GitHub Actions
-          author_email: 41898282+github-actions[bot]@users.noreply.github.com
-          message: "Bump version to ${{ env.NEW_VERSION }}"
+          title: Bump to $newVersion
+          branch: bump-to-$newVersion
+          add-paths: src/main/aerospike.c, VERSION
+          commit-message: Bump version to ${{ env.NEW_VERSION }}
+          delete-branch: true
+
 
       # - name: Create release notes
       #   uses: release-drafter/release-drafter@v5
@@ -56,6 +63,6 @@ jobs:
 
   build-wheels:
     needs: bump-version
-    uses: ./.github/workflows/build-wheels.yml
+    uses: aerospike/aerospike-client-python/.github/workflows/build-wheels.yml@${{needs.bump-version.outputs.new_version}}
     with:
       test-wheels: ${{ github.event.inputs.test-wheels }}
