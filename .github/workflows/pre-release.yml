@@ -1,0 +1,40 @@
+name: Prepare for release
+
+inputs:
+  version-bump:
+    description: 'Release type'
+    required: true
+    type: choice
+    options:
+    - major
+    - minor
+    - patch
+    default: patch
+
+on:
+  workflow_dispatch:
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+      - run: pip install semver
+      - name: Bump version
+        run: |
+          currentVersion=$(cat VERSION)
+          newVersion=$(pysemver bump ${{ github.event.inputs.version-bump }} $currentVersion)
+          # Update repo files
+          echo $newVersion > VERSION
+          sed -i "s/const char version\[8] = \".*\";/const char version\[8] = \"${newVersion}\";/" src/main/aerospike.c
+          # Allow following steps to get new version
+          echo "NEW_VERSION=$newVersion" >> $GITHUB_ENV
+      - name: Update Github repo
+      - uses: EndBug/add-and-commit@v9
+        with:
+          committer_name: GitHub Actions
+          committer_email: 41898282+github-actions[bot]@users.noreply.github.com
+          message: "Bump version to ${{ env.NEW_VERSION }}"
