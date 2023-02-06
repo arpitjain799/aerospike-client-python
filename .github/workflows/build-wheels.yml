@@ -3,6 +3,12 @@ name: Build wheels
 # Builds wheels and sends to QE and Aerospike artifactory
 on:
   workflow_dispatch:
+    inputs:
+      test-wheels:
+        description: 'Run integration tests on wheels'
+        default: true
+        type: boolean
+
   workflow_call:
     inputs:
       test-wheels:
@@ -57,7 +63,7 @@ jobs:
     - name: Determine whether to run tests
       id: test-check
       run: |
-        if [[ ${{ github.event }} == "workflow_call" && ${{ github.event.inputs.test-wheels }} == "false" ]]; then
+        if [[ ${{ github.event.inputs.test-wheels }} == "false" ]]; then
           # Don't run tests
           echo "::set-output name=CIBW_TEST_COMMAND::''"
         else
@@ -120,7 +126,7 @@ jobs:
     - name: Determine whether to run tests
       id: test-check
       run: |
-        if [[ ${{ github.event }} == "workflow_call" && ${{ github.event.inputs.test-wheels }} == "false" ]]; then
+        if [[ ${{ github.event.inputs.test-wheels }} == "false" ]]; then
           # Don't run tests
           echo "::set-output name=CIBW_TEST_COMMAND::''"
         else
@@ -173,7 +179,7 @@ jobs:
     - name: Determine whether to run tests
       id: test-check
       run: |
-        if [[ ${{ github.event }} == "workflow_call" && ${{ github.event.inputs.test-wheels }} == "false" ]]; then
+        if [[ ${{ github.event.inputs.test-wheels }} == "false" ]]; then
           # Don't run tests
           echo "::set-output name=CIBW_BEFORE_TEST::''"
           echo "::set-output name=CIBW_TEST_COMMAND::''"
