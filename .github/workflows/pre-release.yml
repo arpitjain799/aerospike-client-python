@@ -1,18 +1,17 @@
 name: Prepare for release
 
-inputs:
-  version-bump:
-    description: 'Release type'
-    required: true
-    type: choice
-    options:
-    - major
-    - minor
-    - patch
-    default: patch
-
 on:
   workflow_dispatch:
+    inputs:
+      version-bump:
+        description: 'Release type'
+        required: true
+        type: choice
+        options:
+        - major
+        - minor
+        - patch
+        default: patch
   push:
 
 jobs:
