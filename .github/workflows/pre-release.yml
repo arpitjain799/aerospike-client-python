@@ -66,7 +66,7 @@ jobs:
 
   build-wheels:
     needs: bump-version
-    uses: aerospike/aerospike-client-python/.github/workflows/build-wheels.yml
+    uses: .github/workflows/build-wheels.yml
     with:
       test-wheels: ${{ github.event.inputs.test-wheels }}
       branch: ${{ github.event.inputs.branch-name }}
