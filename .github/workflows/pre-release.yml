@@ -13,6 +13,7 @@ inputs:
 
 on:
   workflow_dispatch:
+  push:
 
 jobs:
   bump-version:
