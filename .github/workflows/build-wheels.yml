@@ -9,6 +9,10 @@ on:
         description: 'Run integration tests on wheels'
         default: true
         type: boolean
+      branch:
+        description: "Branch to build wheels on"
+        default: stage
+        type: string
 
 jobs:
   manylinux_arm64:
@@ -29,6 +33,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: recursive
+        ref: ${{ github.event.inputs.branch }}
 
     - name: Set up QEMU for cross compiling arm64
       uses: docker/setup-qemu-action@v2
@@ -49,6 +54,16 @@ jobs:
         crudini --set config.conf community-edition hosts ${SERVER_DOCKER_IP}:3000
       working-directory: test
 
+    - name: Determine whether to run tests
+      id: test-check
+      run: |
+        if [[ ${{ github.event }} == "workflow_call" && ${{ github.event.inputs.test-wheels }} == "false" ]]; then
+          # Don't run tests
+          echo "::set-output name=CIBW_TEST_COMMAND::''"
+        else
+          echo "::set-output name=CIBW_TEST_COMMAND::'cd {project}/test/ && pip install -r requirements.txt && python -m pytest new_tests/'"
+        fi
+
     - name: Build wheel
       uses: pypa/cibuildwheel@v2.11.2
       env:
@@ -59,10 +74,7 @@ jobs:
           yum install python-devel -y &&
           yum install python-setuptools -y
         CIBW_ARCHS: "aarch64"
-        CIBW_TEST_COMMAND: >
-          cd {project}/test/ &&
-          pip install -r requirements.txt &&
-          python -m pytest new_tests/
+        CIBW_TEST_COMMAND: ${{ steps.test-check.outputs.CIBW_TEST_COMMAND }}
 
     - name: Upload wheels to GitHub
       uses: actions/upload-artifact@v3
@@ -89,6 +101,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: recursive
+        ref: ${{ github.event.inputs.branch }}
 
     - name: Set up Aerospike server
       run: docker run -d --name aerospike -p 3000-3002:3000-3002 aerospike/aerospike-server
@@ -104,6 +117,16 @@ jobs:
         crudini --set config.conf community-edition hosts ${SERVER_DOCKER_IP}:3000
       working-directory: test
 
+    - name: Determine whether to run tests
+      id: test-check
+      run: |
+        if [[ ${{ github.event }} == "workflow_call" && ${{ github.event.inputs.test-wheels }} == "false" ]]; then
+          # Don't run tests
+          echo "::set-output name=CIBW_TEST_COMMAND::''"
+        else
+          echo "::set-output name=CIBW_TEST_COMMAND::'cd {project}/test/ && pip install -r requirements.txt && python -m pytest new_tests/'"
+        fi
+
     - name: Build wheel
       uses: pypa/cibuildwheel@v2.11.2
       env:
@@ -114,10 +137,7 @@ jobs:
           yum install python-devel -y &&
           yum install python-setuptools -y
         CIBW_ARCHS: "x86_64"
-        CIBW_TEST_COMMAND: >
-          cd {project}/test/ &&
-          pip install -r requirements.txt &&
-          python -m pytest new_tests/
+        CIBW_TEST_COMMAND: ${{ steps.test-check.outputs.CIBW_TEST_COMMAND }}
 
     - name: Upload wheels to GitHub
       uses: actions/upload-artifact@v3
@@ -143,11 +163,24 @@ jobs:
     - uses: actions/checkout@v3
       with:
         submodules: recursive
+        ref: ${{ github.event.inputs.branch }}
 
     - name: Set up Python ${{ matrix.python-version[1] }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version[1] }}
+
+    - name: Determine whether to run tests
+      id: test-check
+      run: |
+        if [[ ${{ github.event }} == "workflow_call" && ${{ github.event.inputs.test-wheels }} == "false" ]]; then
+          # Don't run tests
+          echo "::set-output name=CIBW_BEFORE_TEST::''"
+          echo "::set-output name=CIBW_TEST_COMMAND::''"
+        else
+          echo "::set-output name=CIBW_BEFORE_TEST::'vagrant up && sleep 3 && pip install -r test/requirements.txt'"
+          echo "::set-output name=CIBW_TEST_COMMAND::'cd {project}/test/ && pip install -r requirements.txt && python -m pytest new_tests/'"
+        fi
 
     - name: Build wheel
       uses: pypa/cibuildwheel@v2.11.2
@@ -156,13 +189,8 @@ jobs:
         CIBW_BUILD_FRONTEND: build
         CIBW_ENVIRONMENT: SSL_LIB_PATH="$(brew --prefix openssl@1.1)/lib/" CPATH="$(brew --prefix openssl@1.1)/include/" STATIC_SSL=1
         CIBW_ARCHS: "x86_64"
-        CIBW_BEFORE_TEST: >
-          vagrant up &&
-          sleep 3 &&
-          pip install -r test/requirements.txt
-        CIBW_TEST_COMMAND: >
-          cd {project}/test/ &&
-          python -m pytest new_tests/
+        CIBW_BEFORE_TEST: ${{ steps.test-check.outputs.CIBW_BEFORE_TEST }}
+        CIBW_TEST_COMMAND: ${{ steps.test-check.outputs.CIBW_TEST_COMMAND }}
 
     - name: Save macOS wheel
       uses: actions/upload-artifact@v3
@@ -190,6 +218,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: recursive
+        ref: ${{ github.event.inputs.branch }}
 
     - name: Build wheel
       uses: pypa/cibuildwheel@v2.11.2

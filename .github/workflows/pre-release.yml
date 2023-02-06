@@ -40,17 +40,20 @@ jobs:
           sed -i "s/const char version\[8] = \".*\";/const char version\[8] = \"${newVersion}\";/" src/main/aerospike.c
           # Allow following steps to get new version
           echo "NEW_VERSION=$newVersion" >> $GITHUB_ENV
-          # Also pass new version to build wheels workflow
-          echo "new_version=$newVersion" >> $GITHUB_OUTPUT
+          # Also pass branch name to build wheels workflow
+          branch_name=bump-to-$newVersion
+          echo "BRANCH_NAME=${branch_name}" >> $GITHUB_ENV
+          echo "branch-name=${branch_name}" >> $GITHUB_OUTPUT
+        # TODO: have to create a PR for now
+        # since Github Actions bot doesn't have permission to push to protected branch
       - name: Create pull request
         uses: peter-evans/create-pull-request@v4
         with:
           title: Bump to $newVersion
-          branch: bump-to-$newVersion
+          branch: ${{ env.BRANCH_NAME }}
           add-paths: src/main/aerospike.c, VERSION
           commit-message: Bump version to ${{ env.NEW_VERSION }}
           delete-branch: true
-
 
       # - name: Create release notes
       #   uses: release-drafter/release-drafter@v5
@@ -63,6 +66,7 @@ jobs:
 
   build-wheels:
     needs: bump-version
-    uses: aerospike/aerospike-client-python/.github/workflows/build-wheels.yml@${{needs.bump-version.outputs.new_version}}
+    uses: aerospike/aerospike-client-python/.github/workflows/build-wheels.yml
     with:
       test-wheels: ${{ github.event.inputs.test-wheels }}
+      branch: ${{ github.event.inputs.branch-name }}
