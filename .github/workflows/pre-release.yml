@@ -12,10 +12,10 @@ on:
         - minor
         - patch
         default: patch
-    test-wheels:
-      description: 'Run integration tests on wheels'
-      default: true
-      type: boolean
+      test-wheels:
+        description: 'Run integration tests on wheels'
+        default: true
+        type: boolean
 
 jobs:
   bump-version:
