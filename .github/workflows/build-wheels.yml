@@ -184,7 +184,7 @@ jobs:
           echo "CIBW_BEFORE_TEST=echo Skipping CIBW_BEFORE_TEST..." >> $GITHUB_OUTPUT
           echo "CIBW_TEST_COMMAND=echo Skipping CIBW_TEST_COMMAND..." >> $GITHUB_OUTPUT
         else
-          echo "CIBW_BEFORE_TEST=vagrant up && sleep 3"
+          echo "CIBW_BEFORE_TEST=vagrant up && sleep 3" >> $GITHUB_OUTPUT
           echo "CIBW_TEST_COMMAND=cd {project}/test/ && pip install -r requirements.txt && python -m pytest new_tests/" >> $GITHUB_OUTPUT
         fi
 
