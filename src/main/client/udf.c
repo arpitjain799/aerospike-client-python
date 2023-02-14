@@ -99,7 +99,7 @@ PyObject *AerospikeClient_UDF_Put(AerospikeClient *self, PyObject *args,
         py_ustr = PyUnicode_AsUTF8String(py_filename);
         filename = PyBytes_AsString(py_ustr);
     }
-    else if (PyString_Check(py_filename)) {
+    else if (PyUnicode_Check(py_filename)) {
         filename = PyString_AsString(py_filename);
     }
     else {
@@ -114,7 +114,7 @@ PyObject *AerospikeClient_UDF_Put(AerospikeClient *self, PyObject *args,
     if (err.code != AEROSPIKE_OK) {
         goto CLEANUP;
     }
-    as_udf_type udf_type = (as_udf_type)PyInt_AsLong(py_udf_type);
+    as_udf_type udf_type = (as_udf_type)PyLong_AsLong(py_udf_type);
 
     // Convert lua file to content
     as_bytes content;
@@ -342,7 +342,7 @@ PyObject *AerospikeClient_UDF_Remove(AerospikeClient *self, PyObject *args,
         py_ustr = PyUnicode_AsUTF8String(py_filename);
         filename = PyBytes_AsString(py_ustr);
     }
-    else if (PyString_Check(py_filename)) {
+    else if (PyUnicode_Check(py_filename)) {
         filename = PyString_AsString(py_filename);
     }
     else {
@@ -542,7 +542,7 @@ PyObject *AerospikeClient_UDF_Get_UDF(AerospikeClient *self, PyObject *args,
         py_ustr = PyUnicode_AsUTF8String(py_module);
         strModule = PyBytes_AsString(py_ustr);
     }
-    else if (PyString_Check(py_module)) {
+    else if (PyUnicode_Check(py_module)) {
         strModule = PyString_AsString(py_module);
     }
     else {

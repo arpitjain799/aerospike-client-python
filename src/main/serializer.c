@@ -239,7 +239,7 @@ void execute_user_callback(user_serializer_callback *user_callback_info,
         as_bytes *bytes_pointer = *bytes;
         char *bytes_val_p = (char *)bytes_pointer->value;
         py_value =
-            PyString_FromStringAndSize(bytes_val_p, as_bytes_size(*bytes));
+            PyUnicode_FromStringAndSize(bytes_val_p, as_bytes_size(*bytes));
         if (PyTuple_SetItem(py_arglist, 0, py_value) != 0) {
             Py_DECREF(py_arglist);
             goto CLEANUP;
@@ -259,7 +259,7 @@ void execute_user_callback(user_serializer_callback *user_callback_info,
             py_val = (char *)PyUnicode_AsUTF8AndSize(py_return, &len);
 #else
             py_val = PyString_AsString(py_return);
-            len = PyString_Size(py_return);
+            len = PyUnicode_GET_SIZE(py_return);
 #endif
             set_as_bytes(bytes, (uint8_t *)py_val, len, AS_BYTES_BLOB, error_p);
             Py_DECREF(py_return);
@@ -370,7 +370,7 @@ extern as_status serialize_based_on_serializer_policy(AerospikeClient *self,
                 goto CLEANUP;
             }
             else {
-                PyObject *py_funcname = PyString_FromString("dumps");
+                PyObject *py_funcname = PyUnicode_FromString("dumps");
 
                 Py_INCREF(cpickle_module);
                 initresult = PyObject_CallMethodObjArgs(
@@ -497,7 +497,7 @@ extern as_status deserialize_based_on_as_bytes_type(AerospikeClient *self,
             char *bytes_val_p = (char *)bytes->value;
             PyObject *py_value =
                 PyBytes_FromStringAndSize(bytes_val_p, as_bytes_size(bytes));
-            PyObject *py_funcname = PyString_FromString("loads");
+            PyObject *py_funcname = PyUnicode_FromString("loads");
 
             Py_INCREF(cpickle_module);
             initresult = PyObject_CallMethodObjArgs(cpickle_module, py_funcname,

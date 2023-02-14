@@ -108,15 +108,15 @@ static PyObject *AerospikeClient_InfoNode_Invoke(as_error *err,
             PyObject *py_addr = PyTuple_GetItem(py_host, 0);
             PyObject *py_port = PyTuple_GetItem(py_host, 1);
 
-            if (PyString_Check(py_addr)) {
+            if (PyUnicode_Check(py_addr)) {
                 address = PyString_AsString(py_addr);
             }
             else if (PyUnicode_Check(py_addr)) {
                 py_ustr = PyUnicode_AsUTF8String(py_addr);
                 address = PyBytes_AsString(py_ustr);
             }
-            if (PyInt_Check(py_port)) {
-                port_no = (uint16_t)PyInt_AsLong(py_port);
+            if (PyLong_Check(py_port)) {
+                port_no = (uint16_t)PyLong_AsLong(py_port);
             }
             else if (PyLong_Check(py_port)) {
                 port_no = (uint16_t)PyLong_AsLong(py_port);
@@ -126,7 +126,7 @@ static PyObject *AerospikeClient_InfoNode_Invoke(as_error *err,
             if (PyTuple_Size(py_host) == 3) {
                 PyObject *py_tls = PyTuple_GetItem(py_host, 2);
 
-                if (PyString_Check(py_tls)) {
+                if (PyUnicode_Check(py_tls)) {
                     tls_name = PyString_AsString(py_tls);
                 }
                 else if (PyUnicode_Check(py_tls)) {
@@ -157,7 +157,7 @@ static PyObject *AerospikeClient_InfoNode_Invoke(as_error *err,
         py_ustr1 = PyUnicode_AsUTF8String(py_request_str);
         request_str_p = PyBytes_AsString(py_ustr1);
     }
-    else if (PyString_Check(py_request_str)) {
+    else if (PyUnicode_Check(py_request_str)) {
         request_str_p = PyString_AsString(py_request_str);
     }
     else {
@@ -181,7 +181,7 @@ static PyObject *AerospikeClient_InfoNode_Invoke(as_error *err,
     Py_END_ALLOW_THREADS
     if (err->code == AEROSPIKE_OK) {
         if (response_p && status == AEROSPIKE_OK) {
-            py_response = PyString_FromString(response_p);
+            py_response = PyUnicode_FromString(response_p);
             free(response_p);
         }
         else if (!response_p) {

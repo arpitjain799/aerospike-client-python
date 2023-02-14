@@ -78,7 +78,7 @@ AerospikeScan *AerospikeScan_Apply(AerospikeScan *self, PyObject *args,
         py_umodule = PyUnicode_AsUTF8String(py_module);
         module = PyBytes_AsString(py_umodule);
     }
-    else if (PyString_Check(py_module)) {
+    else if (PyUnicode_Check(py_module)) {
         module = PyString_AsString(py_module);
     }
     else {
@@ -92,7 +92,7 @@ AerospikeScan *AerospikeScan_Apply(AerospikeScan *self, PyObject *args,
         py_ufunction = PyUnicode_AsUTF8String(py_function);
         function = PyBytes_AsString(py_ufunction);
     }
-    else if (PyString_Check(py_function)) {
+    else if (PyUnicode_Check(py_function)) {
         function = PyString_AsString(py_function);
     }
     else {
@@ -192,8 +192,8 @@ bool Scan_Illegal_UDF_Args_Check(PyObject *py_args)
             }
             Py_DECREF(dict_values);
         }
-        else if (!(PyInt_Check(py_val) || PyLong_Check(py_val) ||
-                   PyFloat_Check(py_val) || PyString_Check(py_val) ||
+        else if (!(PyLong_Check(py_val) || PyLong_Check(py_val) ||
+                   PyFloat_Check(py_val) || PyUnicode_Check(py_val) ||
                    PyBool_Check(py_val) || PyUnicode_Check(py_val) ||
                    !strcmp(py_val->ob_type->tp_name, "aerospike.Geospatial") ||
                    PyByteArray_Check(py_val) || (Py_None == py_val) ||

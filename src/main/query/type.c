@@ -188,7 +188,7 @@ static int AerospikeQuery_Type_Init(AerospikeQuery *self, PyObject *args,
     char *namespace = NULL;
     char *set = NULL;
 
-    if (PyString_Check(py_namespace)) {
+    if (PyUnicode_Check(py_namespace)) {
         namespace = PyString_AsString(py_namespace);
     }
     else {
@@ -198,7 +198,7 @@ static int AerospikeQuery_Type_Init(AerospikeQuery *self, PyObject *args,
     }
 
     if (py_set) {
-        if (PyString_Check(py_set)) {
+        if (PyUnicode_Check(py_set)) {
             set = PyString_AsString(py_set);
         }
         else if (PyUnicode_Check(py_set)) {

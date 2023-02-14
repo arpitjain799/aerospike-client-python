@@ -136,7 +136,7 @@ PyObject *AerospikeScan_Results(AerospikeScan *self, PyObject *args,
 	 * If the user specified a nodename, validate and convert it to a char*
 	 */
     if (py_nodename) {
-        if (PyString_Check(py_nodename)) {
+        if (PyUnicode_Check(py_nodename)) {
             nodename = PyString_AsString(py_nodename);
         }
         else if (PyUnicode_Check(py_nodename)) {

@@ -58,7 +58,7 @@ AerospikeQuery *AerospikeQuery_Select(AerospikeQuery *self, PyObject *args,
             py_ubin = PyUnicode_AsUTF8String(py_bin);
             bin = PyBytes_AsString(py_ubin);
         }
-        else if (PyString_Check(py_bin)) {
+        else if (PyUnicode_Check(py_bin)) {
             // TRACE();
             bin = PyString_AsString(py_bin);
         }

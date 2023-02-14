@@ -203,7 +203,7 @@ static PyObject *AerospikeClient_Select_Many_Invoke(AerospikeClient *self,
             filter_bins[i] = PyBytes_AsString(
                 store_unicode_bins(&u_objs, PyUnicode_AsUTF8String(py_bin)));
         }
-        else if (PyString_Check(py_bin)) {
+        else if (PyUnicode_Check(py_bin)) {
             filter_bins[i] = PyString_AsString(py_bin);
         }
         else {

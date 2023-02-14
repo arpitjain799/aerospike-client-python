@@ -64,7 +64,7 @@ static int query_where_add(as_query **query, as_predicate_type predicate,
                 py_ubin = PyUnicode_AsUTF8String(py_bin);
                 bin = PyBytes_AsString(py_ubin);
             }
-            else if (PyString_Check(py_bin)) {
+            else if (PyUnicode_Check(py_bin)) {
                 bin = PyString_AsString(py_bin);
             }
             else if (PyByteArray_Check(py_bin)) {
@@ -79,7 +79,7 @@ static int query_where_add(as_query **query, as_predicate_type predicate,
             if (PyUnicode_Check(py_val1)) {
                 val = strdup(PyBytes_AsString(PyUnicode_AsUTF8String(py_val1)));
             }
-            else if (PyString_Check(py_val1)) {
+            else if (PyUnicode_Check(py_val1)) {
                 val = strdup(PyString_AsString(py_val1));
             }
             else {
@@ -118,7 +118,7 @@ static int query_where_add(as_query **query, as_predicate_type predicate,
                 py_ubin = PyUnicode_AsUTF8String(py_bin);
                 bin = PyBytes_AsString(py_ubin);
             }
-            else if (PyString_Check(py_bin)) {
+            else if (PyUnicode_Check(py_bin)) {
                 bin = PyString_AsString(py_bin);
             }
             else if (PyByteArray_Check(py_bin)) {
@@ -171,7 +171,7 @@ static int query_where_add(as_query **query, as_predicate_type predicate,
                 py_ubin = PyUnicode_AsUTF8String(py_bin);
                 bin = PyBytes_AsString(py_ubin);
             }
-            else if (PyString_Check(py_bin)) {
+            else if (PyUnicode_Check(py_bin)) {
                 bin = PyString_AsString(py_bin);
             }
             else if (PyByteArray_Check(py_bin)) {
@@ -189,7 +189,7 @@ static int query_where_add(as_query **query, as_predicate_type predicate,
                     "Min and max must be provided for a range query");
                 return 1;
             }
-            if (PyInt_Check(py_val1) || PyLong_Check(py_val1)) {
+            if (PyLong_Check(py_val1) || PyLong_Check(py_val1)) {
                 min = pyobject_to_int64(py_val1);
             }
             else {
@@ -198,7 +198,7 @@ static int query_where_add(as_query **query, as_predicate_type predicate,
                 return 1;
             }
 
-            if (PyInt_Check(py_val2) || PyLong_Check(py_val2)) {
+            if (PyLong_Check(py_val2) || PyLong_Check(py_val2)) {
                 max = pyobject_to_int64(py_val2);
             }
             else {
@@ -327,7 +327,7 @@ static PyObject *AerospikeClient_QueryApply_Invoke(
         py_ustr1 = PyUnicode_AsUTF8String(py_set);
         set_p = PyBytes_AsString(py_ustr1);
     }
-    else if (PyString_Check(py_set)) {
+    else if (PyUnicode_Check(py_set)) {
         set_p = PyString_AsString(py_set);
     }
     else if (Py_None != py_set) {
@@ -354,7 +354,7 @@ static PyObject *AerospikeClient_QueryApply_Invoke(
         py_ustr2 = PyUnicode_AsUTF8String(py_module);
         module_p = PyBytes_AsString(py_ustr2);
     }
-    else if (PyString_Check(py_module)) {
+    else if (PyUnicode_Check(py_module)) {
         module_p = PyString_AsString(py_module);
     }
     else {
@@ -368,7 +368,7 @@ static PyObject *AerospikeClient_QueryApply_Invoke(
         py_ustr3 = PyUnicode_AsUTF8String(py_function);
         function_p = PyBytes_AsString(py_ustr3);
     }
-    else if (PyString_Check(py_function)) {
+    else if (PyUnicode_Check(py_function)) {
         function_p = PyString_AsString(py_function);
     }
     else {
@@ -400,19 +400,20 @@ static PyObject *AerospikeClient_QueryApply_Invoke(
                             "Failed to get predicate elements");
             goto CLEANUP;
         }
-        if (!PyInt_Check(py_op) || !PyInt_Check(py_op_data)) {
+        if (!PyLong_Check(py_op) || !PyLong_Check(py_op_data)) {
             as_error_update(&err, AEROSPIKE_ERR_PARAM, "Invalid Predicate");
             goto CLEANUP;
         }
 
-        as_predicate_type op = (as_predicate_type)PyInt_AsLong(py_op);
-        as_index_datatype op_data = (as_index_datatype)PyInt_AsLong(py_op_data);
+        as_predicate_type op = (as_predicate_type)PyLong_AsLong(py_op);
+        as_index_datatype op_data =
+            (as_index_datatype)PyLong_AsLong(py_op_data);
         rc = query_where_add(
             &query_ptr, op, op_data,
             size > 2 ? PyTuple_GetItem(py_predicate, 2) : Py_None,
             size > 3 ? PyTuple_GetItem(py_predicate, 3) : Py_None,
             size > 4 ? PyTuple_GetItem(py_predicate, 4) : Py_None,
-            size > 5 ? PyInt_AsLong(PyTuple_GetItem(py_predicate, 5)) : 0,
+            size > 5 ? PyLong_AsLong(PyTuple_GetItem(py_predicate, 5)) : 0,
             &err);
 
         if (rc) {

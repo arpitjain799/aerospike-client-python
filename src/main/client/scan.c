@@ -122,7 +122,7 @@ static PyObject *AerospikeClient_ScanApply_Invoke(
         py_ustr1 = PyUnicode_AsUTF8String(py_set);
         set_p = PyBytes_AsString(py_ustr1);
     }
-    else if (PyString_Check(py_set)) {
+    else if (PyUnicode_Check(py_set)) {
         set_p = PyString_AsString(py_set);
     }
     else if (Py_None != py_set) {
@@ -157,7 +157,7 @@ static PyObject *AerospikeClient_ScanApply_Invoke(
         py_ustr2 = PyUnicode_AsUTF8String(py_module);
         module_p = PyBytes_AsString(py_ustr2);
     }
-    else if (PyString_Check(py_module)) {
+    else if (PyUnicode_Check(py_module)) {
         module_p = PyString_AsString(py_module);
     }
     else {
@@ -171,7 +171,7 @@ static PyObject *AerospikeClient_ScanApply_Invoke(
         py_ustr3 = PyUnicode_AsUTF8String(py_function);
         function_p = PyBytes_AsString(py_ustr3);
     }
-    else if (PyString_Check(py_function)) {
+    else if (PyUnicode_Check(py_function)) {
         function_p = PyString_AsString(py_function);
     }
     else {

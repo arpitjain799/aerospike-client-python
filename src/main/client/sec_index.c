@@ -275,7 +275,7 @@ PyObject *AerospikeClient_Index_Remove(AerospikeClient *self, PyObject *args,
     }
 
     // Convert python object into namespace string
-    if (!PyString_Check(py_ns)) {
+    if (!PyUnicode_Check(py_ns)) {
         as_error_update(&err, AEROSPIKE_ERR_PARAM,
                         "Namespace should be a string");
         goto CLEANUP;
@@ -288,7 +288,7 @@ PyObject *AerospikeClient_Index_Remove(AerospikeClient *self, PyObject *args,
         py_ustr_name = PyUnicode_AsUTF8String(py_name);
         name = PyBytes_AsString(py_ustr_name);
     }
-    else if (PyString_Check(py_name)) {
+    else if (PyUnicode_Check(py_name)) {
         name = PyString_AsString(py_name);
     }
     else {
@@ -457,8 +457,8 @@ static bool getTypeFromPyObject(PyObject *py_datatype, int *idx_datatype,
 {
 
     long type = 0;
-    if (PyInt_Check(py_datatype)) {
-        type = PyInt_AsLong(py_datatype);
+    if (PyLong_Check(py_datatype)) {
+        type = PyLong_AsLong(py_datatype);
     }
     else if (PyLong_Check(py_datatype)) {
         type = PyLong_AsLong(py_datatype);
@@ -556,7 +556,7 @@ static PyObject *createIndexWithDataAndCollectionType(
     }
 
     // Convert python object into namespace string
-    if (!PyString_Check(py_ns)) {
+    if (!PyUnicode_Check(py_ns)) {
         as_error_update(&err, AEROSPIKE_ERR_PARAM,
                         "Namespace should be a string");
         goto CLEANUP;
@@ -569,7 +569,7 @@ static PyObject *createIndexWithDataAndCollectionType(
         py_ustr_set = PyUnicode_AsUTF8String(py_set);
         set_ptr = PyBytes_AsString(py_ustr_set);
     }
-    else if (PyString_Check(py_set)) {
+    else if (PyUnicode_Check(py_set)) {
         set_ptr = PyString_AsString(py_set);
     }
     else if (py_set != Py_None) {
@@ -584,7 +584,7 @@ static PyObject *createIndexWithDataAndCollectionType(
         py_ustr_bin = PyUnicode_AsUTF8String(py_bin);
         bin_ptr = PyBytes_AsString(py_ustr_bin);
     }
-    else if (PyString_Check(py_bin)) {
+    else if (PyUnicode_Check(py_bin)) {
         bin_ptr = PyString_AsString(py_bin);
     }
     else if (PyByteArray_Check(py_bin)) {
@@ -601,7 +601,7 @@ static PyObject *createIndexWithDataAndCollectionType(
         py_ustr_name = PyUnicode_AsUTF8String(py_name);
         name = PyBytes_AsString(py_ustr_name);
     }
-    else if (PyString_Check(py_name)) {
+    else if (PyUnicode_Check(py_name)) {
         name = PyString_AsString(py_name);
     }
     else {
