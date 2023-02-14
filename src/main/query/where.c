@@ -80,7 +80,7 @@ static int AerospikeQuery_Where_Add(AerospikeQuery *self, PyObject *py_ctx,
                 bin = PyBytes_AsString(py_ubin);
             }
             else if (PyUnicode_Check(py_bin)) {
-                bin = PyString_AsString(py_bin);
+                bin = (char *)PyUnicode_AsUTF8(py_bin);
             }
             else if (PyByteArray_Check(py_bin)) {
                 bin = PyByteArray_AsString(py_bin);
@@ -96,7 +96,7 @@ static int AerospikeQuery_Where_Add(AerospikeQuery *self, PyObject *py_ctx,
                 Py_DECREF(py_uval);
             }
             else if (PyUnicode_Check(py_val1)) {
-                val = strdup(PyString_AsString(py_val1));
+                val = strdup((char *)PyUnicode_AsUTF8(py_val1));
             }
             else {
                 rc = 1;
@@ -135,7 +135,7 @@ static int AerospikeQuery_Where_Add(AerospikeQuery *self, PyObject *py_ctx,
                 bin = PyBytes_AsString(py_ubin);
             }
             else if (PyUnicode_Check(py_bin)) {
-                bin = PyString_AsString(py_bin);
+                bin = (char *)PyUnicode_AsUTF8(py_bin);
             }
             else if (PyByteArray_Check(py_bin)) {
                 bin = PyByteArray_AsString(py_bin);
@@ -193,7 +193,7 @@ static int AerospikeQuery_Where_Add(AerospikeQuery *self, PyObject *py_ctx,
                 bin = PyBytes_AsString(py_ubin);
             }
             else if (PyUnicode_Check(py_bin)) {
-                bin = PyString_AsString(py_bin);
+                bin = (char *)PyUnicode_AsUTF8(py_bin);
             }
             else if (PyByteArray_Check(py_bin)) {
                 bin = PyByteArray_AsString(py_bin);
@@ -241,7 +241,7 @@ static int AerospikeQuery_Where_Add(AerospikeQuery *self, PyObject *py_ctx,
                 bin = PyBytes_AsString(py_ubin);
             }
             else if (PyUnicode_Check(py_bin)) {
-                bin = PyString_AsString(py_bin);
+                bin = (char *)PyUnicode_AsUTF8(py_bin);
             }
             else if (PyByteArray_Check(py_bin)) {
                 bin = PyByteArray_AsString(py_bin);
@@ -257,7 +257,7 @@ static int AerospikeQuery_Where_Add(AerospikeQuery *self, PyObject *py_ctx,
                 Py_DECREF(py_uval);
             }
             else if (PyUnicode_Check(py_val1)) {
-                val = strdup(PyString_AsString(py_val1));
+                val = strdup((char *)PyUnicode_AsUTF8(py_val1));
             }
             else {
                 rc = 1;

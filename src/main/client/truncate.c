@@ -85,7 +85,7 @@ PyObject *AerospikeClient_Truncate(AerospikeClient *self, PyObject *args,
 
     // Start conversion of the namespace parameter
     if (PyUnicode_Check(py_ns)) {
-        namespace = strdup(PyString_AsString(py_ns));
+        namespace = strdup((char *)PyUnicode_AsUTF8(py_ns));
         // If we failed to copy the string, exit
         if (!namespace) {
             as_error_update(&err, AEROSPIKE_ERR_CLIENT,
@@ -113,7 +113,7 @@ PyObject *AerospikeClient_Truncate(AerospikeClient *self, PyObject *args,
 
     // Start conversion of the set parameter
     if (PyUnicode_Check(py_set)) {
-        set = strdup(PyString_AsString(py_set));
+        set = strdup((char *)PyUnicode_AsUTF8(py_set));
         // If we called strdup, and it failed we need to exit
         if (!set) {
             as_error_update(&err, AEROSPIKE_ERR_CLIENT,

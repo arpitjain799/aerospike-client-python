@@ -189,7 +189,7 @@ static int AerospikeQuery_Type_Init(AerospikeQuery *self, PyObject *args,
     char *set = NULL;
 
     if (PyUnicode_Check(py_namespace)) {
-        namespace = PyString_AsString(py_namespace);
+        namespace = (char *)PyUnicode_AsUTF8(py_namespace);
     }
     else {
         as_error_update(&err, AEROSPIKE_ERR_PARAM,
@@ -199,7 +199,7 @@ static int AerospikeQuery_Type_Init(AerospikeQuery *self, PyObject *args,
 
     if (py_set) {
         if (PyUnicode_Check(py_set)) {
-            set = PyString_AsString(py_set);
+            set = (char *)PyUnicode_AsUTF8(py_set);
         }
         else if (PyUnicode_Check(py_set)) {
             py_ustr_set = PyUnicode_AsUTF8String(py_set);

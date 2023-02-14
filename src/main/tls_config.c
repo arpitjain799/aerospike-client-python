@@ -157,7 +157,7 @@ static char *get_string_from_string_like(PyObject *string_like)
     char *ret_str = NULL;
     PyObject *ustr = NULL;
     if (PyUnicode_Check(string_like)) {
-        ret_str = PyString_AsString(string_like);
+        ret_str = (char *)PyUnicode_AsUTF8(string_like);
     }
     else if (PyUnicode_Check(string_like)) {
         ustr = PyUnicode_AsUTF8String(string_like);

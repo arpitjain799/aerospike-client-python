@@ -205,7 +205,7 @@ PyObject *AerospikeScan_Foreach(AerospikeScan *self, PyObject *args,
 
     if (py_nodename) {
         if (PyUnicode_Check(py_nodename)) {
-            nodename = PyString_AsString(py_nodename);
+            nodename = (char *)PyUnicode_AsUTF8(py_nodename);
         }
         else if (PyUnicode_Check(py_nodename)) {
             py_ustr = PyUnicode_AsUTF8String(py_nodename);

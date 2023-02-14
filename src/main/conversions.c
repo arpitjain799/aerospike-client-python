@@ -270,7 +270,7 @@ as_status pyobject_to_as_privileges(as_error *err, PyObject *py_privileges,
             py_dict_key = PyUnicode_FromString("ns");
             if (PyDict_Contains(py_val, py_dict_key)) {
                 PyObject *py_ns = PyDict_GetItemString(py_val, "ns");
-                strcpy(privileges[i]->ns, PyString_AsString(py_ns));
+                strcpy(privileges[i]->ns, (char *)PyUnicode_AsUTF8(py_ns));
             }
             else {
                 strcpy(privileges[i]->ns, "");
@@ -279,7 +279,7 @@ as_status pyobject_to_as_privileges(as_error *err, PyObject *py_privileges,
             py_dict_key = PyUnicode_FromString("set");
             if (PyDict_Contains(py_val, py_dict_key)) {
                 PyObject *py_set = PyDict_GetItemString(py_val, "set");
-                strcpy(privileges[i]->set, PyString_AsString(py_set));
+                strcpy(privileges[i]->set, (char *)PyUnicode_AsUTF8(py_set));
             }
             else {
                 strcpy(privileges[i]->set, "");
@@ -672,7 +672,7 @@ as_status pyobject_to_strArray(as_error *err, PyObject *py_list, char **arr,
         PyObject *py_val = PyList_GetItem(py_list, i);
 
         if (PyUnicode_Check(py_val)) {
-            s = PyString_AsString(py_val);
+            s = (char *)PyUnicode_AsUTF8(py_val);
 
             if (strlen(s) < max_len) {
                 strcpy(arr[i], s);
@@ -851,7 +851,7 @@ as_status pyobject_to_val(AerospikeClient *self, as_error *err,
         Py_DECREF(py_ustr);
     }
     else if (PyUnicode_Check(py_obj)) {
-        char *s = PyString_AsString(py_obj);
+        char *s = (char *)PyUnicode_AsUTF8(py_obj);
         *val = (as_val *)as_string_new(s, false);
     }
     else if (PyBytes_Check(py_obj)) {
@@ -864,7 +864,7 @@ as_status pyobject_to_val(AerospikeClient *self, as_error *err,
         PyObject *py_data = PyObject_GenericGetAttr(py_obj, py_parameter);
         Py_DECREF(py_parameter);
         char *geo_value =
-            PyString_AsString(AerospikeGeospatial_DoDumps(py_data, err));
+            (char *)PyUnicode_AsUTF8(AerospikeGeospatial_DoDumps(py_data, err));
         Py_DECREF(py_data);
         *val = (as_val *)as_geojson_new(geo_value, false);
     }
@@ -971,7 +971,7 @@ as_status pyobject_to_record(AerospikeClient *self, as_error *err,
                 name = PyBytes_AsString(py_ukey);
             }
             else if (PyString_Check(key)) {
-                name = PyString_AsString(key);
+                name = (char *)PyUnicode_AsUTF8(key);
             }
             else {
                 return as_error_update(
@@ -1073,7 +1073,7 @@ as_status pyobject_to_record(AerospikeClient *self, as_error *err,
                     geo_value = PyBytes_AsString(py_ustr);
                 }
                 else {
-                    geo_value = PyString_AsString(py_dumps);
+                    geo_value = (char *)PyUnicode_AsUTF8(py_dumps);
                 }
 
                 ret_val = as_record_set_geojson_strp(rec, name,
@@ -1096,7 +1096,7 @@ as_status pyobject_to_record(AerospikeClient *self, as_error *err,
                 Py_DECREF(py_ustr);
             }
             else if (PyUnicode_Check(value)) {
-                char *val = PyString_AsString(value);
+                char *val = (char *)PyUnicode_AsUTF8(value);
                 ret_val = as_record_set_strp(rec, name, val, false);
             }
             else if (PyByteArray_Check(value)) {
@@ -1296,13 +1296,13 @@ as_status pyobject_to_key(as_error *err, PyObject *py_keytuple, as_key *key)
                                "namespace must be a string");
     }
     else {
-        ns = PyString_AsString(py_ns);
+        ns = (char *)PyUnicode_AsUTF8(py_ns);
     }
 
     PyObject *py_ustr = NULL;
     if (py_set && py_set != Py_None) {
         if (PyUnicode_Check(py_set)) {
-            set = PyString_AsString(py_set);
+            set = (char *)PyUnicode_AsUTF8(py_set);
         }
         else if (PyUnicode_Check(py_set)) {
             py_ustr = PyUnicode_AsUTF8String(py_set);
@@ -1327,7 +1327,7 @@ as_status pyobject_to_key(as_error *err, PyObject *py_keytuple, as_key *key)
             Py_DECREF(py_ustr);
         }
         else if (PyUnicode_Check(py_key)) {
-            char *k = PyString_AsString(py_key);
+            char *k = (char *)PyUnicode_AsUTF8(py_key);
             // free flag is set to false, as char *k is an user memory
             // when as_key_destroy is called, it will try to free this memory
             // which is invalid.
@@ -2169,7 +2169,7 @@ void initialize_bin_for_strictypes(AerospikeClient *self, as_error *err,
         binop_bin->valuep = &binop_bin->value;
     }
     else if (PyUnicode_Check(py_value)) {
-        char *val = PyString_AsString(py_value);
+        char *val = (char *)PyUnicode_AsUTF8(py_value);
         as_string_init((as_string *)&binop_bin->value, val, false);
         binop_bin->valuep = &binop_bin->value;
     }
@@ -2201,9 +2201,9 @@ void initialize_bin_for_strictypes(AerospikeClient *self, as_error *err,
     }
     else if (!strcmp(py_value->ob_type->tp_name, "aerospike.Geospatial")) {
         PyObject *py_data =
-            PyObject_GenericGetAttr(py_value, PyString_FromString("geo_data"));
+            PyObject_GenericGetAttr(py_value, PyUnicode_FromString("geo_data"));
         char *geo_value =
-            PyString_AsString(AerospikeGeospatial_DoDumps(py_data, err));
+            (char *)PyUnicode_AsUTF8(AerospikeGeospatial_DoDumps(py_data, err));
         as_geojson_init((as_geojson *)&binop_bin->value, geo_value, false);
         binop_bin->valuep = &binop_bin->value;
     }
@@ -2238,7 +2238,7 @@ as_status bin_strict_type_checking(AerospikeClient *self, as_error *err,
 
     if (py_bin) {
         if (PyUnicode_Check(py_bin)) {
-            *bin = PyString_AsString(py_bin);
+            *bin = (char *)PyUnicode_AsUTF8(py_bin);
         }
         else if (PyByteArray_Check(py_bin)) {
             *bin = PyByteArray_AsString(py_bin);
@@ -2488,7 +2488,7 @@ as_status string_and_pyuni_from_pystring(PyObject *py_string,
     PyObject *intermediate_uni = NULL;
     *c_str_ptr = NULL;
     if (PyUnicode_Check(py_string)) {
-        *c_str_ptr = PyString_AsString(py_string);
+        *c_str_ptr = (char *)PyUnicode_AsUTF8(py_string);
         return AEROSPIKE_OK;
     }
     else if (PyUnicode_Check(py_string)) {

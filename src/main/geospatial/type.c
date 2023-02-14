@@ -158,7 +158,7 @@ AerospikeGeospatial *self;
                         "Unable to call get data in str format");
         goto CLEANUP;
     }
-    char *initresult_str = PyString_AsString(initresult);
+    char *initresult_str = (char *)PyUnicode_AsUTF8(initresult);
     new_repr_str = (char *)malloc(strlen(initresult_str) + 3);
     memset(new_repr_str, '\0', strlen(initresult_str) + 3);
     snprintf(new_repr_str, strlen(initresult_str) + 3, "\'%s\'",

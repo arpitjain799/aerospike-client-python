@@ -258,7 +258,7 @@ void execute_user_callback(user_serializer_callback *user_callback_info,
 #if PY_MAJOR_VERSION >= 3
             py_val = (char *)PyUnicode_AsUTF8AndSize(py_return, &len);
 #else
-            py_val = PyString_AsString(py_return);
+            py_val = (char *)PyUnicode_AsUTF8(py_return);
             len = PyUnicode_GET_SIZE(py_return);
 #endif
             set_as_bytes(bytes, (uint8_t *)py_val, len, AS_BYTES_BLOB, error_p);

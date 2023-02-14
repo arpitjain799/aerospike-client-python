@@ -929,12 +929,13 @@ static int AerospikeClient_Type_Init(AerospikeClient *self, PyObject *args,
         PyObject *py_lua_user_path = PyDict_GetItemString(py_lua, "user_path");
         if (py_lua_user_path && PyUnicode_Check(py_lua_user_path)) {
             lua_user_path = true;
-            if (strnlen(PyString_AsString(py_lua_user_path),
+            if (strnlen((char *)PyUnicode_AsUTF8(py_lua_user_path),
                         AS_CONFIG_PATH_MAX_SIZE) > AS_CONFIG_PATH_MAX_LEN) {
                 error_code = INIT_LUA_USER_ERR;
                 goto CONSTRUCTOR_ERROR;
             }
-            strcpy(config.lua.user_path, PyString_AsString(py_lua_user_path));
+            strcpy(config.lua.user_path,
+                   (char *)PyUnicode_AsUTF8(py_lua_user_path));
         }
     }
 
@@ -973,7 +974,7 @@ static int AerospikeClient_Type_Init(AerospikeClient *self, PyObject *args,
 
                 py_addr = PyTuple_GetItem(py_host, 0);
                 if (PyUnicode_Check(py_addr)) {
-                    addr = strdup(PyString_AsString(py_addr));
+                    addr = strdup((char *)PyUnicode_AsUTF8(py_addr));
                 }
                 else if (PyUnicode_Check(py_addr)) {
                     PyObject *py_ustr = PyUnicode_AsUTF8String(py_addr);
@@ -991,7 +992,8 @@ static int AerospikeClient_Type_Init(AerospikeClient *self, PyObject *args,
                 if (PyTuple_Size(py_host) == 3) {
                     py_tls_name = PyTuple_GetItem(py_host, 2);
                     if (PyUnicode_Check(py_tls_name)) {
-                        tls_name = strdup(PyString_AsString(py_tls_name));
+                        tls_name =
+                            strdup((char *)PyUnicode_AsUTF8(py_tls_name));
                     }
                     else if (PyUnicode_Check(py_tls_name)) {
                         PyObject *py_ustr = PyUnicode_AsUTF8String(py_tls_name);
@@ -1001,7 +1003,7 @@ static int AerospikeClient_Type_Init(AerospikeClient *self, PyObject *args,
                 }
             }
             else if (PyUnicode_Check(py_host)) {
-                addr = strdup(strtok(PyString_AsString(py_host), ":"));
+                addr = strdup(strtok((char *)PyUnicode_AsUTF8(py_host), ":"));
                 addr = strtok(addr, ":");
                 char *temp = strtok(NULL, ":");
                 if (NULL != temp) {
@@ -1361,8 +1363,8 @@ static int AerospikeClient_Type_Init(AerospikeClient *self, PyObject *args,
 
     PyObject *py_cluster_name = PyDict_GetItemString(py_config, "cluster_name");
     if (py_cluster_name && PyUnicode_Check(py_cluster_name)) {
-        as_config_set_cluster_name(&config,
-                                   strdup(PyString_AsString(py_cluster_name)));
+        as_config_set_cluster_name(
+            &config, strdup((char *)PyUnicode_AsUTF8(py_cluster_name)));
     }
 
     //strict_types check
@@ -1403,8 +1405,8 @@ static int AerospikeClient_Type_Init(AerospikeClient *self, PyObject *args,
     PyObject *py_user_pwd = PyDict_GetItemString(py_config, "password");
     if (py_user_name && PyUnicode_Check(py_user_name) && py_user_pwd &&
         PyUnicode_Check(py_user_pwd)) {
-        char *username = PyString_AsString(py_user_name);
-        char *password = PyString_AsString(py_user_pwd);
+        char *username = (char *)PyUnicode_AsUTF8(py_user_name);
+        char *password = (char *)PyUnicode_AsUTF8(py_user_pwd);
         as_config_set_user(&config, username, password);
     }
 

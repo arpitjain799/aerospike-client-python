@@ -137,7 +137,7 @@ PyObject *AerospikeScan_Results(AerospikeScan *self, PyObject *args,
 	 */
     if (py_nodename) {
         if (PyUnicode_Check(py_nodename)) {
-            nodename = PyString_AsString(py_nodename);
+            nodename = (char *)PyUnicode_AsUTF8(py_nodename);
         }
         else if (PyUnicode_Check(py_nodename)) {
             /* The decoding could fail, so we need to check for null */

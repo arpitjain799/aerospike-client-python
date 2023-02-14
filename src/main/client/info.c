@@ -133,7 +133,7 @@ static bool AerospikeClient_Info_each(as_error *err, const as_node *node,
                         host_addr = PyBytes_AsString(py_ustr);
                     }
                     else if (PyUnicode_Check(py_addr)) {
-                        host_addr = PyString_AsString(py_addr);
+                        host_addr = (char *)PyUnicode_AsUTF8(py_addr);
                     }
                     else {
                         as_error_update(&udata_ptr->error, AEROSPIKE_ERR_PARAM,
@@ -366,7 +366,7 @@ PyObject *AerospikeClient_Info(AerospikeClient *self, PyObject *args,
         req = PyBytes_AsString(py_ustr);
     }
     else if (PyUnicode_Check(py_req)) {
-        req = PyString_AsString(py_req);
+        req = (char *)PyUnicode_AsUTF8(py_req);
     }
     else {
         as_error_update(&err, AEROSPIKE_ERR_PARAM, "Request must be a string");
@@ -485,7 +485,7 @@ static PyObject *AerospikeClient_InfoAll_Invoke(AerospikeClient *self,
         request = PyBytes_AsString(py_ustr);
     }
     else if (PyUnicode_Check(py_request)) {
-        request = PyString_AsString(py_request);
+        request = (char *)PyUnicode_AsUTF8(py_request);
     }
     else {
         as_error_update(&err, AEROSPIKE_ERR_PARAM, "Request must be a string");

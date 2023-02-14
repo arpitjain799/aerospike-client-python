@@ -65,7 +65,7 @@ static int query_where_add(as_query **query, as_predicate_type predicate,
                 bin = PyBytes_AsString(py_ubin);
             }
             else if (PyUnicode_Check(py_bin)) {
-                bin = PyString_AsString(py_bin);
+                bin = (char *)PyUnicode_AsUTF8(py_bin);
             }
             else if (PyByteArray_Check(py_bin)) {
                 bin = PyByteArray_AsString(py_bin);
@@ -80,7 +80,7 @@ static int query_where_add(as_query **query, as_predicate_type predicate,
                 val = strdup(PyBytes_AsString(PyUnicode_AsUTF8String(py_val1)));
             }
             else if (PyUnicode_Check(py_val1)) {
-                val = strdup(PyString_AsString(py_val1));
+                val = strdup((char *)PyUnicode_AsUTF8(py_val1));
             }
             else {
                 as_error_update(
@@ -119,7 +119,7 @@ static int query_where_add(as_query **query, as_predicate_type predicate,
                 bin = PyBytes_AsString(py_ubin);
             }
             else if (PyUnicode_Check(py_bin)) {
-                bin = PyString_AsString(py_bin);
+                bin = (char *)PyUnicode_AsUTF8(py_bin);
             }
             else if (PyByteArray_Check(py_bin)) {
                 bin = PyByteArray_AsString(py_bin);
@@ -172,7 +172,7 @@ static int query_where_add(as_query **query, as_predicate_type predicate,
                 bin = PyBytes_AsString(py_ubin);
             }
             else if (PyUnicode_Check(py_bin)) {
-                bin = PyString_AsString(py_bin);
+                bin = (char *)PyUnicode_AsUTF8(py_bin);
             }
             else if (PyByteArray_Check(py_bin)) {
                 bin = PyByteArray_AsString(py_bin);
@@ -328,7 +328,7 @@ static PyObject *AerospikeClient_QueryApply_Invoke(
         set_p = PyBytes_AsString(py_ustr1);
     }
     else if (PyUnicode_Check(py_set)) {
-        set_p = PyString_AsString(py_set);
+        set_p = (char *)PyUnicode_AsUTF8(py_set);
     }
     else if (Py_None != py_set) {
         // Scan whole namespace if set is 'None' else error
@@ -355,7 +355,7 @@ static PyObject *AerospikeClient_QueryApply_Invoke(
         module_p = PyBytes_AsString(py_ustr2);
     }
     else if (PyUnicode_Check(py_module)) {
-        module_p = PyString_AsString(py_module);
+        module_p = (char *)PyUnicode_AsUTF8(py_module);
     }
     else {
         as_error_update(&err, AEROSPIKE_ERR_PARAM,
@@ -369,7 +369,7 @@ static PyObject *AerospikeClient_QueryApply_Invoke(
         function_p = PyBytes_AsString(py_ustr3);
     }
     else if (PyUnicode_Check(py_function)) {
-        function_p = PyString_AsString(py_function);
+        function_p = (char *)PyUnicode_AsUTF8(py_function);
     }
     else {
         as_error_update(&err, AEROSPIKE_ERR_PARAM,

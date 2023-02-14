@@ -91,7 +91,7 @@ AerospikeClient_RemoveBin_Invoke(AerospikeClient *self, PyObject *py_key,
             binName = PyBytes_AsString(py_ustr);
         }
         else if (PyUnicode_Check(py_val)) {
-            binName = PyString_AsString(py_val);
+            binName = (char *)PyUnicode_AsUTF8(py_val);
         }
         else {
             as_error_update(err, AEROSPIKE_ERR_CLIENT,

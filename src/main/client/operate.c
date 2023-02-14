@@ -390,7 +390,7 @@ as_status add_op(AerospikeClient *self, as_error *err, PyObject *py_val,
                                    "An operation key must be a string.");
         }
         else {
-            char *name = PyString_AsString(key_op);
+            char *name = (char *)PyUnicode_AsUTF8(key_op);
             if (!strcmp(name, "op")) {
                 continue;
             }
@@ -441,7 +441,7 @@ as_status add_op(AerospikeClient *self, as_error *err, PyObject *py_val,
             Py_DECREF(py_ustr);
         }
         else if (PyUnicode_Check(py_bin)) {
-            bin = PyString_AsString(py_bin);
+            bin = (char *)PyUnicode_AsUTF8(py_bin);
         }
         else if (PyByteArray_Check(py_bin)) {
             bin = PyByteArray_AsString(py_bin);

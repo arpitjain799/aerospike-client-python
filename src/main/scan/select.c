@@ -60,7 +60,7 @@ AerospikeScan *AerospikeScan_Select(AerospikeScan *self, PyObject *args,
                 bin = PyBytes_AsString(py_ustr);
             }
             else if (PyUnicode_Check(py_bin)) {
-                bin = PyString_AsString(py_bin);
+                bin = (char *)PyUnicode_AsUTF8(py_bin);
             }
             else if (PyByteArray_Check(py_bin)) {
                 bin = PyByteArray_AsString(py_bin);

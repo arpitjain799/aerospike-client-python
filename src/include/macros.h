@@ -16,19 +16,8 @@
 
 #pragma once
 
-// convert python 2.x calls to python 3.x
-#if PY_MAJOR_VERSION >= 3
-    #if PY_MINOR_VERSION < 7
-        #define PyString_AsString PyUnicode_AsUTF8
-    #else
-        #define PyString_AsString (char *)PyUnicode_AsUTF8
-        #define PyEval_InitThreads Py_Initialize
-    #endif
-#endif
-
 // define module definition and initialization macros
 #if PY_MAJOR_VERSION >= 3
-    #define MOD_INIT(name) PyMODINIT_FUNC PyInit_##name(void)
     #define MOD_DEF(ob, name, doc, size, methods, clear)                       \
         static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,          \
                                                name,                           \

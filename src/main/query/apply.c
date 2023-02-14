@@ -81,7 +81,7 @@ AerospikeQuery *AerospikeQuery_Apply(AerospikeQuery *self, PyObject *args,
         module = PyBytes_AsString(py_umodule);
     }
     else if (PyUnicode_Check(py_module)) {
-        module = PyString_AsString(py_module);
+        module = (char *)PyUnicode_AsUTF8(py_module);
     }
     else {
         as_error_update(
@@ -95,7 +95,7 @@ AerospikeQuery *AerospikeQuery_Apply(AerospikeQuery *self, PyObject *args,
         function = PyBytes_AsString(py_ufunction);
     }
     else if (PyUnicode_Check(py_function)) {
-        function = PyString_AsString(py_function);
+        function = (char *)PyUnicode_AsUTF8(py_function);
     }
     else {
         as_error_update(

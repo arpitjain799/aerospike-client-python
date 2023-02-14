@@ -100,7 +100,7 @@ PyObject *AerospikeClient_UDF_Put(AerospikeClient *self, PyObject *args,
         filename = PyBytes_AsString(py_ustr);
     }
     else if (PyUnicode_Check(py_filename)) {
-        filename = PyString_AsString(py_filename);
+        filename = (char *)PyUnicode_AsUTF8(py_filename);
     }
     else {
         as_error_update(&err, AEROSPIKE_ERR_PARAM,
@@ -343,7 +343,7 @@ PyObject *AerospikeClient_UDF_Remove(AerospikeClient *self, PyObject *args,
         filename = PyBytes_AsString(py_ustr);
     }
     else if (PyUnicode_Check(py_filename)) {
-        filename = PyString_AsString(py_filename);
+        filename = (char *)PyUnicode_AsUTF8(py_filename);
     }
     else {
         as_error_update(&err, AEROSPIKE_ERR_PARAM,
@@ -543,7 +543,7 @@ PyObject *AerospikeClient_UDF_Get_UDF(AerospikeClient *self, PyObject *args,
         strModule = PyBytes_AsString(py_ustr);
     }
     else if (PyUnicode_Check(py_module)) {
-        strModule = PyString_AsString(py_module);
+        strModule = (char *)PyUnicode_AsUTF8(py_module);
     }
     else {
         as_error_update(&err, AEROSPIKE_ERR_CLIENT,

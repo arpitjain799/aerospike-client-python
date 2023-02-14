@@ -93,13 +93,13 @@ PyObject *AerospikeClient_Select_Invoke(AerospikeClient *self, PyObject *py_key,
             PyObject *py_val = PyList_GetItem(py_bins, i);
             bins[i] = (char *)alloca(sizeof(char) * AS_BIN_NAME_MAX_SIZE);
             if (PyUnicode_Check(py_val)) {
-                strncpy(bins[i], PyString_AsString(py_val),
+                strncpy(bins[i], (char *)PyUnicode_AsUTF8(py_val),
                         AS_BIN_NAME_MAX_LEN);
                 bins[i][AS_BIN_NAME_MAX_LEN] = '\0';
             }
             else if (PyUnicode_Check(py_val)) {
                 py_ustr = PyUnicode_AsUTF8String(py_val);
-                strncpy(bins[i], PyString_AsString(py_val),
+                strncpy(bins[i], (char *)PyUnicode_AsUTF8(py_val),
                         AS_BIN_NAME_MAX_LEN);
                 Py_CLEAR(py_ustr);
                 bins[i][AS_BIN_NAME_MAX_LEN] = '\0';
@@ -127,7 +127,7 @@ PyObject *AerospikeClient_Select_Invoke(AerospikeClient *self, PyObject *py_key,
                 bins[i][AS_BIN_NAME_MAX_LEN] = '\0';
             }
             else if (PyUnicode_Check(py_val)) {
-                strncpy(bins[i], PyString_AsString(py_val),
+                strncpy(bins[i], (char *)PyUnicode_AsUTF8(py_val),
                         AS_BIN_NAME_MAX_LEN);
                 bins[i][AS_BIN_NAME_MAX_LEN] = '\0';
             }

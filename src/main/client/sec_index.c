@@ -280,7 +280,7 @@ PyObject *AerospikeClient_Index_Remove(AerospikeClient *self, PyObject *args,
                         "Namespace should be a string");
         goto CLEANUP;
     }
-    char *namespace = PyString_AsString(py_ns);
+    char *namespace = (char *)PyUnicode_AsUTF8(py_ns);
 
     // Convert PyObject into the name of the index
     char *name = NULL;
@@ -289,7 +289,7 @@ PyObject *AerospikeClient_Index_Remove(AerospikeClient *self, PyObject *args,
         name = PyBytes_AsString(py_ustr_name);
     }
     else if (PyUnicode_Check(py_name)) {
-        name = PyString_AsString(py_name);
+        name = (char *)PyUnicode_AsUTF8(py_name);
     }
     else {
         as_error_update(&err, AEROSPIKE_ERR_PARAM,
@@ -561,7 +561,7 @@ static PyObject *createIndexWithDataAndCollectionType(
                         "Namespace should be a string");
         goto CLEANUP;
     }
-    char *namespace = PyString_AsString(py_ns);
+    char *namespace = (char *)PyUnicode_AsUTF8(py_ns);
 
     // Convert python object into set string
     char *set_ptr = NULL;
@@ -570,7 +570,7 @@ static PyObject *createIndexWithDataAndCollectionType(
         set_ptr = PyBytes_AsString(py_ustr_set);
     }
     else if (PyUnicode_Check(py_set)) {
-        set_ptr = PyString_AsString(py_set);
+        set_ptr = (char *)PyUnicode_AsUTF8(py_set);
     }
     else if (py_set != Py_None) {
         as_error_update(&err, AEROSPIKE_ERR_PARAM,
@@ -585,7 +585,7 @@ static PyObject *createIndexWithDataAndCollectionType(
         bin_ptr = PyBytes_AsString(py_ustr_bin);
     }
     else if (PyUnicode_Check(py_bin)) {
-        bin_ptr = PyString_AsString(py_bin);
+        bin_ptr = (char *)PyUnicode_AsUTF8(py_bin);
     }
     else if (PyByteArray_Check(py_bin)) {
         bin_ptr = PyByteArray_AsString(py_bin);
@@ -602,7 +602,7 @@ static PyObject *createIndexWithDataAndCollectionType(
         name = PyBytes_AsString(py_ustr_name);
     }
     else if (PyUnicode_Check(py_name)) {
-        name = PyString_AsString(py_name);
+        name = (char *)PyUnicode_AsUTF8(py_name);
     }
     else {
         as_error_update(&err, AEROSPIKE_ERR_PARAM,

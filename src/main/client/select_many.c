@@ -204,7 +204,7 @@ static PyObject *AerospikeClient_Select_Many_Invoke(AerospikeClient *self,
                 store_unicode_bins(&u_objs, PyUnicode_AsUTF8String(py_bin)));
         }
         else if (PyUnicode_Check(py_bin)) {
-            filter_bins[i] = PyString_AsString(py_bin);
+            filter_bins[i] = (char *)PyUnicode_AsUTF8(py_bin);
         }
         else {
             as_error_update(&err, AEROSPIKE_ERR_PARAM,

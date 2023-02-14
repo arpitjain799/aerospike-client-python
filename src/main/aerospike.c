@@ -150,12 +150,12 @@ static int Aerospike_Clear(PyObject *aerospike)
     return 0;
 }
 
-MOD_INIT(aerospike)
+PyMODINIT_FUNC PyInit_aerospike(void)
 {
 
     const char version[8] = "10.0.1";
     // Makes things "thread-safe"
-    PyEval_InitThreads();
+    Py_Initialize();
     int i = 0;
 
     // aerospike Module

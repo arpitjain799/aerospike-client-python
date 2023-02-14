@@ -109,7 +109,7 @@ static PyObject *AerospikeClient_InfoNode_Invoke(as_error *err,
             PyObject *py_port = PyTuple_GetItem(py_host, 1);
 
             if (PyUnicode_Check(py_addr)) {
-                address = PyString_AsString(py_addr);
+                address = (char *)PyUnicode_AsUTF8(py_addr);
             }
             else if (PyUnicode_Check(py_addr)) {
                 py_ustr = PyUnicode_AsUTF8String(py_addr);
@@ -127,7 +127,7 @@ static PyObject *AerospikeClient_InfoNode_Invoke(as_error *err,
                 PyObject *py_tls = PyTuple_GetItem(py_host, 2);
 
                 if (PyUnicode_Check(py_tls)) {
-                    tls_name = PyString_AsString(py_tls);
+                    tls_name = (char *)PyUnicode_AsUTF8(py_tls);
                 }
                 else if (PyUnicode_Check(py_tls)) {
                     py_uni_tls_name = PyUnicode_AsUTF8String(py_tls);
@@ -158,7 +158,7 @@ static PyObject *AerospikeClient_InfoNode_Invoke(as_error *err,
         request_str_p = PyBytes_AsString(py_ustr1);
     }
     else if (PyUnicode_Check(py_request_str)) {
-        request_str_p = PyString_AsString(py_request_str);
+        request_str_p = (char *)PyUnicode_AsUTF8(py_request_str);
     }
     else {
         as_error_update(err, AEROSPIKE_ERR_PARAM,
