@@ -201,8 +201,8 @@ jobs:
         docker container rm aerospike
 
     - name: Enable security features using aerospike.conf
-      # Security stanza
-      run: echo -e "security {\n\n}\n" >> ./aerospike.conf
+      # Add security stanza and enable quotas
+      run: echo -e "security {\n\tenable-quotas true\n}\n" >> ./aerospike.conf
       working-directory: ./configs
 
     - name: Run enterprise edition server
