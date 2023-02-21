@@ -970,7 +970,7 @@ as_status pyobject_to_record(AerospikeClient *self, as_error *err,
                 }
                 name = PyBytes_AsString(py_ukey);
             }
-            else if (PyString_Check(key)) {
+            else if (PyUnicode_Check(key)) {
                 name = (char *)PyUnicode_AsUTF8(key);
             }
             else {
