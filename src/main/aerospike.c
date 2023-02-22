@@ -158,11 +158,16 @@ PyMODINIT_FUNC PyInit_aerospike(void)
     Py_Initialize();
     int i = 0;
 
-    // aerospike Module
-    PyObject *aerospike;
+    static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,
+                                           "aerospike",
+                                           "Aerospike Python Client",
+                                           sizeof(struct Aerospike_State),
+                                           Aerospike_Methods,
+                                           NULL,
+                                           NULL,
+                                           Aerospike_Clear};
 
-    MOD_DEF(aerospike, "aerospike", "Aerospike Python Client",
-            sizeof(struct Aerospike_State), Aerospike_Methods, Aerospike_Clear)
+    PyObject *aerospike = PyModule_Create(&moduledef);
 
     Aerospike_Enable_Default_Logging();
 
@@ -236,7 +241,7 @@ PyMODINIT_FUNC PyInit_aerospike(void)
     PyModule_AddObject(aerospike, "CDTInfinite", (PyObject *)infinite_object);
     Aerospike_State(aerospike)->infinite_object = infinite_object;
 
-    return MOD_SUCCESS_VAL(aerospike);
+    return aerospike;
 }
 
 PyObject *AerospikeInitAsync(PyObject *self, PyObject *args, PyObject *kwds)

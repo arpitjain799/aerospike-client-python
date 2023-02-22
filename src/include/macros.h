@@ -18,16 +18,6 @@
 
 // define module definition and initialization macros
 #if PY_MAJOR_VERSION >= 3
-    #define MOD_DEF(ob, name, doc, size, methods, clear)                       \
-        static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,          \
-                                               name,                           \
-                                               doc,                            \
-                                               size,                           \
-                                               methods,                        \
-                                               NULL,                           \
-                                               NULL,                           \
-                                               clear};                         \
-        ob = PyModule_Create(&moduledef);
     #define MOD_SUCCESS_VAL(val) val
 #else
     #define MOD_INIT(name) PyMODINIT_FUNC init##name(void)
