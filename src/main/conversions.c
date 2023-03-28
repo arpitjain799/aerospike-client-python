@@ -1893,6 +1893,8 @@ as_status key_to_pyobject(as_error *err, const as_key *key, PyObject **obj)
             if (!py_key) {
                 as_error_update(err, AEROSPIKE_ERR_CLIENT,
                                 "Unknown type for value");
+                Py_XDECREF(py_namespace);
+                Py_XDECREF(py_set);
                 return err->code;
             }
             break;
@@ -2197,7 +2199,7 @@ void initialize_bin_for_strictypes(AerospikeClient *self, as_error *err,
         // Make a copy of the encoding since the utf8 encoding points to a buffer in the PyUnicode object
         // So if we deallocate the PyUnicode object, the buffer will also be deallocated
         // and then the geojson object will be pointing to invalid memory
-        char* geo_data_str_cpy = strdup(geo_data_str);
+        char *geo_data_str_cpy = strdup(geo_data_str);
         as_geojson_init((as_geojson *)&binop_bin->value, geo_data_str_cpy,
                         true);
         binop_bin->valuep = &binop_bin->value;
