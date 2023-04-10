@@ -75,7 +75,7 @@ jobs:
         docker container stop aerospike
         docker container prune -f
 
-  pypy3.9:
+  pypy39:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
