@@ -95,6 +95,10 @@ jobs:
     - name: Install client
       run: pypy3.9 -m pip install dist/*.whl
 
+    - name: Install test dependencies
+      run: pypy3.9 -m pip install pytest
+      working-directory: test
+
     - name: Test
       run: pypy3.9 -m pytest new_tests/
       working-directory: test
