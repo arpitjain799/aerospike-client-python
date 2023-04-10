@@ -155,7 +155,7 @@ MOD_INIT(aerospike)
 
     const char version[8] = "11.0.1";
     // Makes things "thread-safe"
-    PyEval_InitThreads();
+    // PyEval_InitThreads();
     int i = 0;
 
     // aerospike Module
