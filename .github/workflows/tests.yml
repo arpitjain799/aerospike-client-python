@@ -75,6 +75,26 @@ jobs:
         docker container stop aerospike
         docker container prune -f
 
+  pypy-3.9:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Install build dependencies (pip packages)
+      run: pypy3.9 -m pip install build
+
+    - name: Build client
+      run: pypy3.9 -m build
+
+    - name: Install client
+      run: pypy3.9 -m pip install dist/*.whl
+
+    - name: Test
+      run: pypy3.9 -m pytest new_tests/
+      working-directory: test
+
   build:
     runs-on: ubuntu-latest
     strategy:
