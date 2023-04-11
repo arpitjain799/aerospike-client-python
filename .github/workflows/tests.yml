@@ -106,7 +106,7 @@ jobs:
       run: sleep 3
 
     - name: Test
-      run: pypy3.9 -m pytest new_tests/
+      run: pypy3.9 -m pytest new_tests/ -vv
       working-directory: test
 
   build:
