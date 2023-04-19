@@ -245,6 +245,9 @@ jobs:
       if: ${{ !inputs.use-server-rc }}
       run: sshpass -p ${{ secrets.M1_WORKFLOW_SERVER_PW }} ssh -n -o StrictHostKeyChecking=no citrusleaf@${{ secrets.M1_WORKFLOW_SERVER_ADDRESS }} docker run -d --pull "always" --name aerospike -p 3000-3002:3000-3002 aerospike/aerospike-server
 
+    - run: |
+        sed -i '.bak' "s/hosts: 127.0.0.1:3000/hosts: ${{ secrets.M1_WORKFLOW_SERVER_ADDRESS }}:3000/" test/config.conf
+
     - run: python${{ matrix.python-version }} -m build
     - run: delocate-wheel --require-archs "arm64" -w wheelhouse/ -v dist/*.whl
     - run: python${{ matrix.python-version }} -m pip install --find-links=wheelhouse/ --no-index aerospike
