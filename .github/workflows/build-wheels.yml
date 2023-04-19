@@ -223,7 +223,6 @@ jobs:
         submodules: recursive
 
     # Update dependencies if needed
-    - run: brew install hashicorp/tap/hashicorp-vagrant
     - run: brew install python@${{ matrix.python-version }}
     - run: brew install openssl@1.1
     - run: brew install hudochenkov/sshpass/sshpass
