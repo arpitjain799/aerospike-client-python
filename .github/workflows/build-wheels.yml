@@ -207,46 +207,51 @@ jobs:
         path: wheelhouse/*.whl
 
   macOS-m1:
+    runs-on: self-hosted
     strategy:
       fail-fast: false
       matrix:
         python-version: [
-          ["cp38", "3.8"],
-          ["cp39", "3.9"],
-          ["cp310", "3.10"],
-          ["cp311", "3.11"]
+            "3.8",
+            "3.9",
+            "3.10",
+            "3.11"
         ]
-    runs-on: self-hosted
     steps:
     - uses: actions/checkout@v3
       with:
         submodules: recursive
 
-    # - name: Set up Python ${{ matrix.python-version[1] }}
-    #   uses: actions/setup-python@v3
-    #   with:
-    #     python-version: ${{ matrix.python-version[1] }}
+    # Update dependencies if needed
+    - run: brew install hashicorp/tap/hashicorp-vagrant
+    - run: brew install python@${{ matrix.python-version }}
+    - run: brew install openssl@1.1
+    - run: |
+        openssl_path=$(brew --prefix openssl@1.1)
+        echo SSL_LIB_PATH="$openssl_path/lib/" >> $GITHUB_ENV
+        echo CPATH="$openssl_path/include/" >> $GITHUB_ENV
+        echo STATIC_SSL=1 >> $GITHUB_ENV
 
-    - name: Build wheel
-      uses: pypa/cibuildwheel@v2.11.2
-      env:
-        CIBW_BUILD: ${{ matrix.python-version[0] }}-macosx_amd64
-        CIBW_BUILD_FRONTEND: build
-        CIBW_ENVIRONMENT: SSL_LIB_PATH="$(brew --prefix openssl@1.1)/lib/" CPATH="$(brew --prefix openssl@1.1)/include/" STATIC_SSL=1
-        CIBW_ARCHS: "amd64"
-        CIBW_BEFORE_TEST: >
-          # export USE_SERVER_RC=${{ inputs.use-server-rc }} &&
-          # vagrant up &&
-          # sleep 3 &&
-          # pip install -r test/requirements.txt
-        CIBW_TEST_COMMAND: >
-          # cd {project}/test/ &&
-          # python -m pytest new_tests/
+    - run: python${{ matrix.python-version }} -m pip install build delocate
+
+    - run: |
+          export USE_SERVER_RC=${{ inputs.use-server-rc }}
+          vagrant up
+
+    - run: python${{ matrix.python-version }} -m build
+    - run: delocate-wheel --require-archs "arm64" -w wheelhouse/ -v dist/*.whl
+    - run: python${{ matrix.python-version }} -m pip install --find-links=wheelhouse/ --no-index aerospike
+
+    - run: python${{ matrix.python-version }} -m pip install -r requirements.txt
+      working-directory: test
+
+    - run: python${{ matrix.python-version }} -m pytest new_tests/
+      working-directory: test
 
     - name: Save macOS wheel
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ matrix.os }}-amd64-${{ matrix.python-version[0] }}-wheel
+        name: macos-12-amd64-${{ matrix.python-version }}-wheel
         path: wheelhouse/*.whl
 
   send-to-qe:
