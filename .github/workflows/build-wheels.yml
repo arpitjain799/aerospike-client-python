@@ -224,7 +224,7 @@ jobs:
 
     # Update dependencies if needed
     - name: Add brew to path
-      run: export PATH=$PATH:/opt/homebrew/bin/brew
+      run: echo PATH=$PATH:/opt/homebrew/bin/brew >> $GITHUB_ENV
     - run: brew install python@${{ matrix.python-version }}
     - run: brew install openssl@1.1
     - run: brew install hudochenkov/sshpass/sshpass
