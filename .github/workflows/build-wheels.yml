@@ -226,6 +226,8 @@ jobs:
     - run: brew install hashicorp/tap/hashicorp-vagrant
     - run: brew install python@${{ matrix.python-version }}
     - run: brew install openssl@1.1
+    - run: brew install hudochenkov/sshpass/sshpass
+
     - run: |
         openssl_path=$(brew --prefix openssl@1.1)
         echo SSL_LIB_PATH="$openssl_path/lib/" >> $GITHUB_ENV
@@ -234,9 +236,13 @@ jobs:
 
     - run: python${{ matrix.python-version }} -m pip install build delocate
 
-    - run: |
-          export USE_SERVER_RC=${{ inputs.use-server-rc }}
-          vagrant up
+    - name: Run Aerospike server release candidate
+      if: ${{ inputs.use-server-rc }}
+      run: sshpass -p ${{ secret.M1_WORKFLOW_SERVER_PW }} ssh citrusleaf@${{ secret.M1_WORKFLOW_SERVER_ADDRESS }} docker run -d --pull "always" --name aerospike -p 3000-3002:3000-3002 aerospike.jfrog.io/docker/aerospike/aerospike-server-rc:latest
+
+    - name: Set up Aerospike server
+      if: ${{ !inputs.use-server-rc }}
+      run: sshpass -p ${{ secret.M1_WORKFLOW_SERVER_PW }} ssh citrusleaf@${{ secret.M1_WORKFLOW_SERVER_ADDRESS }} docker run -d --pull "always" --name aerospike -p 3000-3002:3000-3002 aerospike/aerospike-server
 
     - run: python${{ matrix.python-version }} -m build
     - run: delocate-wheel --require-archs "arm64" -w wheelhouse/ -v dist/*.whl
@@ -253,6 +259,12 @@ jobs:
       with:
         name: macos-12-amd64-${{ matrix.python-version }}-wheel
         path: wheelhouse/*.whl
+
+    - name: Stop server
+      if: ${{ always() }}
+      run: |
+        sshpass -p ${{ secret.M1_WORKFLOW_SERVER_PW }} ssh citrusleaf@${{ secret.M1_WORKFLOW_SERVER_ADDRESS }} docker container stop aerospike
+        sshpass -p ${{ secret.M1_WORKFLOW_SERVER_PW }} ssh citrusleaf@${{ secret.M1_WORKFLOW_SERVER_ADDRESS }} docker container prune -f
 
   send-to-qe:
     needs: [manylinux_x86_64, manylinux_arm64]
