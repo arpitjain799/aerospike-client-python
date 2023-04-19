@@ -250,7 +250,7 @@ jobs:
 
     - run: python${{ matrix.python-version }} -m build
     - run: delocate-wheel --require-archs "arm64" -w wheelhouse/ -v dist/*.whl
-    - run: python${{ matrix.python-version }} -m pip install --find-links=wheelhouse/ --no-index aerospike
+    - run: python${{ matrix.python-version }} -m pip install --find-links=wheelhouse/ --no-index --force-reinstall aerospike
 
     - run: python${{ matrix.python-version }} -m pip install -r requirements.txt
       working-directory: test
