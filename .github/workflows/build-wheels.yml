@@ -248,7 +248,7 @@ jobs:
     - run: |
         sed -i '.bak' "s/hosts: 127.0.0.1:3000/hosts: ${{ secrets.M1_WORKFLOW_SERVER_ADDRESS }}:3000/" test/config.conf
 
-    - run: MACOSX_DEPLOYMENT_TARGET=11 python${{ matrix.python-version }} -m build
+    - run: MACOSX_DEPLOYMENT_TARGET="11.0" python${{ matrix.python-version }} -m build
     - run: delocate-wheel --require-archs "arm64" -w wheelhouse/ -v dist/*.whl
     - run: python${{ matrix.python-version }} -m pip install --find-links=wheelhouse/ --no-index --force-reinstall aerospike
 
