@@ -67,12 +67,11 @@ class TestListSize(object):
         """
         key = ("test", "demo", 1)
         policy = {"timeout": 0.5}
-        try:
+        with pytest.raises(e.ParamError) as excinfo:
             self.as_connection.list_size(key, "contact_no", {}, policy)
 
-        except e.ParamError as exception:
-            assert exception.code == -2
-            assert exception.msg == "timeout is invalid"
+        assert excinfo.value.code == -2
+        assert excinfo.value.msg == "timeout is invalid"
 
     def test_neg_list_size_with_nonexistent_key(self):
         """
@@ -83,10 +82,9 @@ class TestListSize(object):
         maxLength = 30
         length = random.randint(minLength, maxLength)
         key = ("test", "demo", "".join(map(lambda unused: random.choice(charSet), range(length))) + ".com")
-        try:
+        with pytest.raises(e.RecordNotFound) as excinfo:
             self.as_connection.list_size(key, "contact_no")
-        except e.RecordNotFound as exception:
-            assert exception.code == 2
+        assert excinfo.value.code == 2
 
     def test_neg_list_size_with_nonexistent_bin(self):
         """
@@ -98,10 +96,9 @@ class TestListSize(object):
         maxLength = 10
         length = random.randint(minLength, maxLength)
         bin = "".join(map(lambda unused: random.choice(charSet), range(length))) + ".com"
-        try:
+        with pytest.raises(e.RecordNotFound) as excinfo:
             self.as_connection.list_size(key, bin)
-        except e.RecordNotFound as exception:
-            assert exception.code == 2
+        assert excinfo.value.code == 2
 
     def test_neg_list_size_with_extra_parameter(self):
         """
@@ -119,44 +116,40 @@ class TestListSize(object):
         Invoke list_size() with policy is string
         """
         key = ("test", "demo", 1)
-        try:
+        with pytest.raises(e.ParamError) as excinfo:
             self.as_connection.list_size(key, "contact_no", {}, "")
 
-        except e.ParamError as exception:
-            assert exception.code == -2
-            assert exception.msg == "policy must be a dict"
+        assert excinfo.value.code == -2
+        assert excinfo.value.msg == "policy must be a dict"
 
     def test_neg_list_size_key_is_none(self):
         """
         Invoke list_size() with key is none
         """
-        try:
+        with pytest.raises(e.ParamError) as excinfo:
             self.as_connection.list_size(None, "contact_no")
 
-        except e.ParamError as exception:
-            assert exception.code == -2
-            assert exception.msg == "key is invalid"
+        assert excinfo.value.code == -2
+        assert excinfo.value.msg == "key is invalid"
 
     def test_neg_list_size_bin_is_none(self):
         """
         Invoke list_size() with bin is none
         """
         key = ("test", "demo", 1)
-        try:
+        with pytest.raises(e.ParamError) as excinfo:
             self.as_connection.list_size(key, None)
 
-        except e.ParamError as exception:
-            assert exception.code == -2
-            assert exception.msg == "Bin name should be of type string"
+        assert excinfo.value.code == -2
+        assert excinfo.value.msg == "Bin name should be of type string"
 
     def test_neg_list_size_meta_type_integer(self):
         """
         Invoke list_size() with metadata input is of type integer
         """
         key = ("test", "demo", 1)
-        try:
+        with pytest.raises(e.ParamError) as excinfo:
             self.as_connection.list_size(key, "contact_no", 888)
 
-        except e.ParamError as exception:
-            assert exception.code == -2
-            assert exception.msg == "Metadata should be of type dictionary"
+        assert excinfo.value.code == -2
+        assert excinfo.value.msg == "Metadata should be of type dictionary"
