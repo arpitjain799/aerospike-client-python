@@ -31,11 +31,11 @@ sudo yum install python-devel # on CentOS 7
 sudo yum install python-setuptools
 ```
 
-### Debian 8+ and Ubuntu 18.04+
+### Debian and Ubuntu 18.04+
 
 The following are dependencies for:
 
-- Debian 8 or newer
+- Debian 10
 - Ubuntu 18.04 or newer
 - Related distributions which use the `apt` package manager
 
